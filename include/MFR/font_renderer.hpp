@@ -44,6 +44,11 @@ namespace MFR {
     public:
         using mars_engine::singleton::singleton;
 
+        ~font_renderer() {
+            m_fonts.lock()->clear();
+            m_text.clear();
+        }
+
         void load_font(const std::string& _path);
         void render();
     };

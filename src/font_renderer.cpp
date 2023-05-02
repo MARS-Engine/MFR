@@ -64,11 +64,12 @@ void font_renderer::load_font(const std::string& _path) {
 
     for (auto& character : characters) {
         FT_Load_Char(face, character.first, FT_LOAD_RENDER);
-        auto buffer = engine()->graphics()->create<mars_graphics::buffer>();
-        buffer->create(character.second.size.x * character.second.size.y, mars_graphics::MARS_MEMORY_TYPE_TRANSFER, 1);
-        buffer->copy_data(face->glyph->bitmap.buffer, 0);
+        auto buff_buidler = engine()->graphics()->builder<mars_graphics::buffer_builder>();
+        auto buffer = buff_buidler.set_size(character.second.size.x * character.second.size.y).set_type(mars_graphics::MARS_MEMORY_TYPE_TRANSFER).build();
+        buffer->update(face->glyph->bitmap.buffer);
+        buffer->copy_data(0);
 
-        builder.copy_buffer_to_image(buffer.ptr(), { offset.x, offset.y, character.second.size.x, character.second.size.y });
+        builder.copy_buffer_to_image(buffer, { offset.x, offset.y, character.second.size.x, character.second.size.y });
         character.second.position = offset;
 
         offset.x += face->glyph->bitmap.width;
@@ -77,6 +78,7 @@ void font_renderer::load_font(const std::string& _path) {
             offset.x = 0;
             offset.y += size.y;
         }
+
     }
 
     auto fonts = m_fonts.lock();
