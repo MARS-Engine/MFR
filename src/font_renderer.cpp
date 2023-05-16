@@ -54,7 +54,7 @@ void font_renderer::load_font(const std::string& _path) {
     } while (!found);
 
     auto val = std::pow(2, ceil(log(std::pow(2, final_size) * size.z)/log(2)) - 1);
-    mars_math::vector2<uint32_t> real_size(val, val);
+    mars_math::vector2<int> real_size(val, val);
 
     auto builder = engine()->graphics()->builder<mars_graphics::texture_builder>();
     builder.set_size({ real_size.x, real_size.y }).set_format(mars_graphics::MARS_FORMAT_S_R8).set_usage(mars_graphics::MARS_TEXTURE_USAGE_TRANSFER);
