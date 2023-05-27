@@ -56,6 +56,8 @@ void font_renderer::load_font(const std::string& _path) {
     auto val = std::pow(2, ceil(log(std::pow(2, final_size) * size.z)/log(2)) - 1);
     mars_math::vector2<int> real_size(val, val);
 
+    std::vector<std::shared_ptr<mars_graphics::buffer>> m_update_buffers;
+
     auto builder = engine()->graphics()->builder<mars_graphics::texture_builder>();
     builder.set_size({ real_size.x, real_size.y }).set_format(mars_graphics::MARS_FORMAT_S_R8).set_usage(mars_graphics::MARS_TEXTURE_USAGE_TRANSFER);
     builder.initialize();
@@ -68,11 +70,12 @@ void font_renderer::load_font(const std::string& _path) {
         auto buffer = buff_buidler.set_size(character.second.size.x * character.second.size.y).set_type(mars_graphics::MARS_MEMORY_TYPE_TRANSFER).build();
         buffer->update(face->glyph->bitmap.buffer);
         buffer->copy_data(0);
+        m_update_buffers.push_back(buffer);
 
         builder.copy_buffer_to_image(buffer, { offset.x, offset.y, character.second.size.x, character.second.size.y });
         character.second.position = offset;
 
-        offset.x += face->glyph->bitmap.width;
+        offset.x += character.second.size.x;
 
         if (offset.x + size.x >= real_size.x) {
             offset.x = 0;
@@ -87,6 +90,8 @@ void font_renderer::load_font(const std::string& _path) {
     new_font->path = _path;
     new_font->characters = characters;
     new_font->texture = builder.build();
+
+    m_update_buffers.clear();
 
     FT_Done_Face(face);
     FT_Done_FreeType(library);

@@ -1,7 +1,7 @@
 #ifndef MARS_FONT_RENDERER_
 #define MARS_FONT_RENDERER_
 
-#include <pl/safe_vector.hpp>
+#include <pl/safe.hpp>
 #include <MARS/engine/singleton.hpp>
 #include <map>
 #include <MARS/graphics/backend/template/texture.hpp>
@@ -40,7 +40,7 @@ namespace MFR {
     class font_renderer : public mars_engine::singleton {
     private:
         std::vector<std::shared_ptr<text>> m_text;
-        pl::safe_vector<std::shared_ptr<font>> m_fonts;
+        pl::safe<std::vector<std::shared_ptr<font>>> m_fonts;
     public:
         using mars_engine::singleton::singleton;
 
